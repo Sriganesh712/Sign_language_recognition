@@ -5,6 +5,7 @@ import AutoCapture from "./components/AutoCapture";
 export default function App() {
   return (
     <div>
+      <DataCollector/>
       <AutoCapture />
     </div>
   );

